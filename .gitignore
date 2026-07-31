@@ -1,0 +1,20 @@
+# Windows 系統產生的垃圾檔（共享資料夾特別容易生出這些）
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+
+# Office / WPS 暫存檔
+~$*
+*.tmp
+
+# 編輯器設定
+.vscode/
+.idea/
+
+# 本機草稿區：要放在共享區但不想上傳到 GitHub 的東西丟這裡
+_local/

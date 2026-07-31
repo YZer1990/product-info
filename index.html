@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>產品訊息</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand: #8b5cf6;
+    --brand-dark: #6d28d9;
+    --text: #1a1a1a;
+    --muted: #5a6470;
+    --line: #e3e8ee;
+    --bg: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: "Noto Sans TC", system-ui, "Microsoft JhengHei", sans-serif;
+    font-size: 18px; line-height: 1.8; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 48px 24px 80px; }
+  header { border-bottom: 3px solid var(--brand); padding-bottom: 16px; margin-bottom: 32px; }
+  h1 { margin: 0 0 6px; font-size: 32px; letter-spacing: 1px; }
+  .sub { color: var(--muted); font-size: 15px; }
+  .notice {
+    background: #fef9c3; border: 1px solid #facc15; border-radius: 8px;
+    padding: 16px 20px; margin-bottom: 32px; font-size: 16px;
+  }
+  .notice strong { color: #854d0e; }
+  h2 { font-size: 22px; margin: 40px 0 12px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+  .card {
+    border: 1px solid var(--line); border-radius: 10px; padding: 20px 22px;
+    transition: box-shadow .15s, transform .15s;
+  }
+  .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.08); transform: translateY(-2px); }
+  .card .date { color: var(--brand-dark); font-size: 13px; font-weight: 500; letter-spacing: .5px; }
+  .card .title { font-size: 18px; font-weight: 700; margin: 6px 0 8px; }
+  .card .desc { color: var(--muted); font-size: 15px; line-height: 1.7; }
+  footer {
+    margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>產品訊息</h1>
+    <div class="sub">傳奇亞太科技 ALPHABET ｜ 內部發布</div>
+  </header>
+
+  <div class="notice">
+    <strong>※ 這是測試頁</strong><br>
+    網站架構與 GitHub Pages 設定驗證用，目前尚未放入真實內容。
+    確認公司內容公開規範後再替換本頁。
+  </div>
+
+  <h2>訊息列表</h2>
+  <div class="cards">
+
+    <div class="card">
+      <div class="date">2026-01-01</div>
+      <div class="title">範例訊息標題一</div>
+      <div class="desc">這是版位示範用的假資料。每則訊息一張卡片，可加上連結指向獨立頁面。</div>
+    </div>
+
+    <div class="card">
+      <div class="date">2026-01-01</div>
+      <div class="title">範例訊息標題二</div>
+      <div class="desc">確認過樣式與網址都正常運作之後，把這些卡片換成實際內容即可。</div>
+    </div>
+
+  </div>
+
+  <footer>
+    最後更新：請於每次改動時同步修改此處<br>
+    維護方式請見 repo 內的 README.md
+  </footer>
+
+</div>
+</body>
+</html>
