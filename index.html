@@ -1,89 +1,529 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>產品訊息</title>
-<meta name="robots" content="noindex, nofollow">
+<title>Slot Games — Game Vault</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --brand: #8b5cf6;
-    --brand-dark: #6d28d9;
-    --text: #1a1a1a;
-    --muted: #5a6470;
-    --line: #e3e8ee;
-    --bg: #ffffff;
+:root {
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --line: #e6e7ef;
+  --text: #1c1c2e;
+  --muted: #7a7c92;
+  --accent: #6c5ce7;
+  --accent-soft: #efeaff;
+  --maxw: 1440px;
+  --pad: 32px;
+  --shadow: 0 6px 22px rgba(30, 30, 60, .10);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg); color: var(--text); font-family: "Roboto", "Noto Sans TC", "Segoe UI", sans-serif; min-height: 100vh; }
+
+/* ===== 頁首（內容包在與卡片同寬的置中容器，Logo 左緣對齊第一張卡片） ===== */
+header.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(255,255,255,.72);
+  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+}
+.topbar-inner {
+  max-width: var(--maxw); margin: 0 auto; padding: 0 var(--pad);
+  height: 88px; display: flex; align-items: center;
+}
+.logo-img { height: 72px; width: auto; display: block; }
+
+.container { max-width: var(--maxw); margin: 0 auto; padding: 28px var(--pad) 60px; }
+
+/* ===== 返回連結 ===== */
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: #7a7c92; text-decoration: none;
+  font: 400 .95rem/1 "Roboto","Noto Sans TC",sans-serif;
+  margin-bottom: 24px;
+  transition: color .2s;
+}
+.back-link:hover { color: #5a5c72; }
+.back-link svg { stroke: currentColor; }
+
+/* ===== 分類篩選卡片 ===== */
+.category-tabs {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;
+  margin-bottom: 32px;
+}
+.cat-tab {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px; padding: 24px 16px; border-radius: 16px;
+  background: #f5f5f7; border: 1px solid #e6e7ef;
+  cursor: pointer; transition: all .25s ease;
+  font: 600 .95rem/1 "Roboto","Noto Sans TC",sans-serif; color: #1c1c2e;
+}
+.cat-tab svg { width: 32px; height: 32px; stroke: #1c1c2e; transition: stroke .25s; }
+.cat-tab:hover { border-color: #c9cbe0; background: #ebebed; }
+.cat-tab.active {
+  background: #26b9d5; border-color: #26b9d5; color: #ffffff;
+  box-shadow: 0 6px 20px rgba(38,185,213,.3);
+}
+.cat-tab.active svg { stroke: #ffffff; }
+
+/* ===== 篩選列 ===== */
+.filters { display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-end; margin-bottom: 28px; }
+.field { display: flex; flex-direction: column; gap: 7px; }
+.field label { font-size: 1rem; font-weight: 700; color: #4a4c63; }
+
+/* 自訂下拉選單 */
+.custom-select {
+  position: relative; min-width: 190px;
+}
+.select-trigger {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--panel); border: 1px solid var(--line);
+  padding: 11px 16px; border-radius: 10px; cursor: pointer;
+  transition: border-color .15s, box-shadow .15s;
+  font: 400 1rem/1 "Roboto","Noto Sans TC",sans-serif;
+}
+.select-trigger:hover { border-color: #26b9d5; }
+.custom-select.open .select-trigger { 
+  border-color: #26b9d5; 
+  box-shadow: 0 0 0 3px rgba(38,185,213,.1);
+}
+.select-value { color: var(--text); }
+.select-arrow { 
+  stroke: var(--muted); 
+  transition: transform .2s;
+  margin-left: 12px;
+}
+.custom-select.open .select-arrow { transform: rotate(180deg); }
+
+/* 下拉選項列表 */
+.select-options {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: #ffffff; border: 1px solid var(--line); border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.1);
+  list-style: none; margin: 0; padding: 4px 0;
+  opacity: 0; visibility: hidden; transform: translateY(-8px);
+  transition: opacity .2s, transform .2s, visibility .2s;
+  z-index: 100;
+  max-height: 240px; overflow-y: auto;
+}
+.custom-select.open .select-options {
+  opacity: 1; visibility: visible; transform: translateY(0);
+}
+.select-options li {
+  padding: 10px 16px; cursor: pointer;
+  font: 400 1rem/1.4 "Roboto","Noto Sans TC",sans-serif;
+  color: var(--text);
+  transition: background .15s, color .15s;
+}
+.select-options li:hover {
+  background: rgba(38,185,213,.08);
+}
+.select-options li.selected {
+  color: #26b9d5;
+  font-weight: 600;
+}
+
+/* ===== 遊戲卡片牆 ===== */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 32px 30px; }
+
+.gameCard {
+  position: relative; aspect-ratio: 300 / 340; border-radius: 22px; overflow: hidden;
+  background: transparent;   /* 不用灰色漸層底，避免角丸邊緣露出灰色細線 */
+  box-shadow: none;
+  text-decoration: none; color: inherit;
+  transition: transform .38s cubic-bezier(.16,.84,.30,1);
+  will-change: transform;
+}
+.gameCard:hover { transform: translateY(-6px); }
+
+/* Artwork：鋪滿、積極 crop；上下左右各多蓋 1px，把角丸邊緣的細線吃掉 */
+.cardArt {
+  position: absolute; top: -1px; left: -1px; width: calc(100% + 2px); height: calc(100% + 2px);
+  object-fit: cover; object-position: center 30%; display: block; z-index: 0;
+}
+
+/* NEW / HOT 標籤 */
+.badge {
+  position: absolute; top: 15px; left: 15px; z-index: 4;
+  padding: 4px 13px; border-radius: 999px; color: #fff;
+  font: 800 .72rem/1 "Roboto","Noto Sans TC",sans-serif; letter-spacing: .5px;
+  box-shadow: 0 4px 10px rgba(0,0,0,.28);
+}
+.badge.new { background: linear-gradient(135deg,#ff8a2d,#ff4d4d); }
+.badge.hot { background: linear-gradient(135deg,#ff5d7d,#e01e37); }
+
+/* 資訊面板：固定高度容器，用 transform 平移控制展開/收起，避免 reflow */
+.cardInfo {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: 54%; /* 固定高度 = 完全展開時的高度 */
+  z-index: 2;
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end;
+  gap: 0; padding: 0 20px 20px;
+  background: linear-gradient(to top,
+     rgba(250,250,253,.86) 42%, rgba(250,250,253,.50) 72%, rgba(250,250,253,.04) 100%);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  transform: translateY(78px); /* 收合時讓遊戲名稱完整露出 */
+  transition: transform 0.42s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+
+/* 小圖標：細邊 + 浮起陰影（無明顯白框），騎在交界左上，半覆蓋 Banner，hover 不消失 */
+.cardIcon {
+  position: absolute; top: -46px; left: 22px; z-index: 3;
+  width: 96px; height: 96px; border-radius: 20px; object-fit: cover; background: #fff;
+  box-shadow: 0 12px 24px rgba(0,0,0,.28), 0 3px 8px rgba(0,0,0,.18);
+  transition: transform .35s cubic-bezier(.16,.84,.30,1);
+}
+
+/* 標題列：靜止在 icon 下方；hover 時整列移到 icon 右側 */
+.infoHead { display: flex; align-items: center; gap: 8px; width: 100%; min-width: 0; }
+.gameTitle {
+  font: 700 1.5rem/1.12 "Roboto","Noto Sans TC",sans-serif; text-transform: uppercase;
+  color: #1c2024; text-align: left;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1 1 auto; min-width: 0;
+}
+.arrow { color: #6b7280; font-weight: 800; font-size: 1.15rem; flex: none; opacity: 0; width: 0; overflow: hidden; transition: opacity .25s; }
+
+/* 數據：初始隱藏，hover 時淡入 */
+.statGrid {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 5px 14px; width: 100%;
+  margin-top: 16px;
+  opacity: 0;
+  transition: opacity 0.3s ease 0.1s; /* 延遲 0.1s 讓滑動先開始 */
+}
+.stat { display: flex; flex-direction: column; min-height: 34px; min-width: 0; }
+.stat .lbl { font: 500 13px/1.35 "Roboto","Noto Sans TC",sans-serif; color: #8b9099; }
+.stat .val { font: 800 14.5px/1.25 "Roboto","Noto Sans TC",sans-serif; color: #1c2024; overflow-wrap: anywhere; }
+
+/* ===== Hover：面板向上滑動歸位 + 數據淡入 ===== */
+.gameCard:hover .cardInfo {
+  transform: translateY(0); /* 歸位，完整顯示 */
+}
+.gameCard:hover .arrow { opacity: 1; width: auto; }
+.gameCard:hover .statGrid { opacity: 1; }
+.gameCard[data-detail-url] { cursor: pointer; }
+.empty { grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 60px 0; font-size: .95rem; }
+footer { text-align: center; color: var(--muted); font-size: .78rem; padding: 8px 20px 40px; }
+
+@media (max-width: 640px) {
+  .container { padding: 20px 18px 48px; }
+  .topbar-inner { padding: 0 18px; }
+  .grid { 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 16px 12px; 
   }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; background: var(--bg); color: var(--text);
-    font-family: "Noto Sans TC", system-ui, "Microsoft JhengHei", sans-serif;
-    font-size: 18px; line-height: 1.8; -webkit-font-smoothing: antialiased;
+  .logo-img { height: 56px; }
+  .topbar-inner { height: 72px; }
+  .category-tabs { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .cat-tab { padding: 16px 8px; gap: 6px; font-size: .8rem; }
+  .cat-tab svg { width: 24px; height: 24px; }
+  .filters { gap: 12px; }
+  .custom-select { min-width: 140px; }
+  
+  /* 手機版卡片調整：取消 hover 動畫，小圖標並排 */
+  .cardInfo {
+    height: 58%;
+    transform: translateY(calc(100% - 104px));
+    padding: 0 14px 14px;
+    gap: 0;
+    cursor: pointer;
   }
-  .wrap { max-width: 1060px; margin: 0 auto; padding: 48px 24px 80px; }
-  header { border-bottom: 3px solid var(--brand); padding-bottom: 16px; margin-bottom: 32px; }
-  h1 { margin: 0 0 6px; font-size: 32px; letter-spacing: 1px; }
-  .sub { color: var(--muted); font-size: 15px; }
-  .notice {
-    background: #fef9c3; border: 1px solid #facc15; border-radius: 8px;
-    padding: 16px 20px; margin-bottom: 32px; font-size: 16px;
+  .cardIcon {
+    position: relative; /* 改為相對定位 */
+    top: 0; left: 0;
+    width: 75px; height: 75px; /* 手機版收合狀態更清楚 */
+    border-radius: 17px;
+    flex-shrink: 0;
+    margin-bottom: 8px;
   }
-  .notice strong { color: #854d0e; }
-  h2 { font-size: 22px; margin: 40px 0 12px; }
-  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-  .card {
-    border: 1px solid var(--line); border-radius: 10px; padding: 20px 22px;
-    transition: box-shadow .15s, transform .15s;
+  .infoHead {
+    flex-direction: row; /* 水平排列 */
+    align-items: center;
+    gap: 10px;
   }
-  .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.08); transform: translateY(-2px); }
-  .card .date { color: var(--brand-dark); font-size: 13px; font-weight: 500; letter-spacing: .5px; }
-  .card .title { font-size: 18px; font-weight: 700; margin: 6px 0 8px; }
-  .card .desc { color: var(--muted); font-size: 15px; line-height: 1.7; }
-  footer {
-    margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line);
-    color: var(--muted); font-size: 14px;
+  .gameTitle {
+    font-size: 1.1rem;
   }
+  .arrow {
+    opacity: .75;
+    width: auto;
+    transform: rotate(90deg);
+    transition: transform .25s, opacity .25s;
+  }
+  .statGrid {
+    display: grid;
+    gap: 4px 10px;
+    margin-top: 10px;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .stat { min-height: 31px; }
+  .stat .lbl { font-size: 11.5px; }
+  .stat .val { font-size: 12.5px; }
+  
+  /* 手機版以點擊控制展開，避免 hover 狀態干擾 */
+  .gameCard:hover .cardInfo {
+    transform: translateY(calc(100% - 104px));
+  }
+  .gameCard:hover .statGrid {
+    opacity: 0;
+  }
+  .gameCard.mobileExpanded .cardInfo,
+  .gameCard.mobileExpanded:hover .cardInfo {
+    transform: translateY(0);
+  }
+  .gameCard.mobileExpanded .statGrid,
+  .gameCard.mobileExpanded:hover .statGrid {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .gameCard.mobileExpanded .arrow {
+    transform: rotate(-90deg);
+  }
+}
 </style>
 </head>
 <body>
-<div class="wrap">
+<header class="topbar">
+  <div class="topbar-inner">
+    <!-- 公司 Logo：換圖只要覆蓋 site/assets/logo.png（或改下面 src 的檔名） -->
+    <img class="logo-img" src="assets/logo.png" alt="ALPHABET 傳奇亞太科技">
+  </div>
+</header>
 
-  <header>
-    <h1>產品訊息</h1>
-    <div class="sub">傳奇亞太科技 ALPHABET ｜ 內部發布</div>
-  </header>
+<div class="container">
+  <!-- 返回連結 -->
+  <a href="https://ktllmmm.github.io/weekly-report/" class="back-link">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 4L6 10l6 6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span>競品動態週報總覽</span>
+  </a>
 
-  <div class="notice">
-    <strong>※ 這是測試頁</strong><br>
-    網站架構與 GitHub Pages 設定驗證用，目前尚未放入真實內容。
-    確認公司內容公開規範後再替換本頁。
+  <!-- 分類篩選卡片 -->
+  <div class="category-tabs">
+    <button class="cat-tab active" data-category="all">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7" rx="1"/>
+        <rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/>
+        <rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
+      <span>All Games</span>
+    </button>
+    <button class="cat-tab" data-category="igaming">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="5" y="4" width="14" height="17" rx="2"/>
+        <path d="M9 18h6"/>
+      </svg>
+      <span>IGaming</span>
+    </button>
+    <button class="cat-tab" data-category="landbase">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="6" y="2" width="12" height="20" rx="1"/>
+        <rect x="8" y="5" width="8" height="10" rx="0.5"/>
+        <circle cx="12" cy="18" r="1.5" fill="currentColor"/>
+        <path d="M9 22h6"/>
+      </svg>
+      <span>IGaming Landbase</span>
+    </button>
   </div>
 
-  <h2>訊息列表</h2>
-  <div class="cards">
-
-    <div class="card">
-      <div class="date">2026-01-01</div>
-      <div class="title">範例訊息標題一</div>
-      <div class="desc">這是版位示範用的假資料。每則訊息一張卡片，可加上連結指向獨立頁面。</div>
+  <div class="filters">
+    <div class="field">
+      <label>Volatility</label>
+      <div class="custom-select" data-filter="volatility">
+        <div class="select-trigger">
+          <span class="select-value">All</span>
+          <svg class="select-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <ul class="select-options">
+          <li data-value="">All</li>
+          <li data-value="Low">Low</li>
+          <li data-value="Medium">Medium</li>
+          <li data-value="Medium High">Medium High</li>
+          <li data-value="High">High</li>
+        </ul>
+      </div>
     </div>
-
-    <div class="card">
-      <div class="date">2026-01-01</div>
-      <div class="title">範例訊息標題二</div>
-      <div class="desc">確認過樣式與網址都正常運作之後，把這些卡片換成實際內容即可。</div>
+    <div class="field">
+      <label>Paylines</label>
+      <div class="custom-select" data-filter="paylines">
+        <div class="select-trigger">
+          <span class="select-value">All</span>
+          <svg class="select-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <ul class="select-options">
+          <li data-value="">All</li>
+          <li data-value="Lines">Lines</li>
+          <li data-value="Ways">Ways</li>
+        </ul>
+      </div>
     </div>
-
   </div>
 
-  <footer>
-    最後更新：請於每次改動時同步修改此處<br>
-    維護方式請見 repo 內的 README.md
-  </footer>
-
+  <div class="grid" id="grid"></div>
 </div>
+
+<footer>ALPHABET · Game Vault</footer>
+
+<!-- 遊戲資料：用 <script> 載入，就算把 index.html 用「檔案」直接開（file://）也能顯示 -->
+<script src="games-data.js"></script>
+<script>
+let GAMES = [];
+let currentCategory = 'all';
+let filters = { volatility: '', paylines: '' };
+
+const esc = s => (s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// GitHub Pages 會自動解析資料夾內的 index.html；本機 file:// 預覽則需明確指定檔名。
+function detailHref(url) {
+  if (window.location.protocol === 'file:' && url.endsWith('/')) return `${url}index.html`;
+  return url;
+}
+
+// Paylines 分類：含 "ways" -> Ways；含 "line" -> Lines
+function paylineClass(lines) {
+  const s = (lines || '').toLowerCase();
+  if (s.includes('ways')) return 'Ways';
+  if (s.includes('line')) return 'Lines';
+  return '';
+}
+
+function boot() {
+  GAMES = window.GAMES || [];
+  
+  // 分類按鈕事件
+  document.querySelectorAll('.cat-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentCategory = btn.dataset.category;
+      applyFilters();
+    });
+  });
+  
+  // 自訂下拉選單
+  document.querySelectorAll('.custom-select').forEach(select => {
+    const trigger = select.querySelector('.select-trigger');
+    const valueEl = select.querySelector('.select-value');
+    const options = select.querySelectorAll('.select-options li');
+    const filterType = select.dataset.filter;
+    
+    // 點擊觸發展開/收起
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = select.classList.contains('open');
+      // 關閉所有其他下拉
+      document.querySelectorAll('.custom-select').forEach(s => s.classList.remove('open'));
+      if (!isOpen) select.classList.add('open');
+    });
+    
+    // 點擊選項
+    options.forEach(option => {
+      option.addEventListener('click', () => {
+        const value = option.dataset.value;
+        const text = option.textContent;
+        
+        // 更新顯示值
+        valueEl.textContent = text;
+        
+        // 更新選中狀態
+        options.forEach(o => o.classList.remove('selected'));
+        option.classList.add('selected');
+        
+        // 更新篩選條件
+        filters[filterType] = value;
+        
+        // 關閉下拉
+        select.classList.remove('open');
+        
+        // 套用篩選
+        applyFilters();
+      });
+    });
+  });
+  
+  // 點擊外部關閉所有下拉
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.custom-select').forEach(s => s.classList.remove('open'));
+  });
+
+  // 手機版：點透明資訊板展開/收合；上半部 cover 保留給未來詳細頁跳轉
+  document.getElementById('grid').addEventListener('click', e => {
+    const card = e.target.closest('.gameCard');
+    if (!card) return;
+    if (card.dataset.detailUrl) window.location.href = detailHref(card.dataset.detailUrl);
+  });
+
+  document.getElementById('grid').addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const card = e.target.closest('.gameCard');
+    if (!card) return;
+    e.preventDefault();
+    if (card.dataset.detailUrl) window.location.href = detailHref(card.dataset.detailUrl);
+  });
+  
+  applyFilters();
+}
+
+function badgeHtml(tag) {
+  if (tag === 'New') return '<span class="badge new">NEW</span>';
+  if (tag === 'Hot') return '<span class="badge hot">HOT</span>';
+  return '';
+}
+
+function statHtml(lbl, val) {
+  // 值為 "None"（該遊戲本來就沒設這個項目）→ 不顯示、不佔位；空白（待補）→ 顯示「—」
+  if ((val || '').trim().toLowerCase() === 'none') return '';
+  return `<div class="stat"><span class="lbl">${lbl}</span><span class="val">${esc(val) || '—'}</span></div>`;
+}
+
+function cardHtml(g) {
+  const art = esc(g.media.featureBgDesktop || g.media.cover);
+  const detailUrl = g.detailUrl ? esc(g.detailUrl) : '';
+  return `
+    <div class="gameCard"${detailUrl ? ` data-detail-url="${detailUrl}" role="link" tabindex="0"` : ''}>
+      <img class="cardArt" src="${art}" alt="${esc(g.name)}">
+      <div class="cardInfo">
+        <img class="cardIcon" src="${esc(g.media.icon)}" alt="">
+        <div class="infoHead">
+          <div class="gameTitle">${esc(g.name)}</div>
+          <span class="arrow">&#10095;</span>
+        </div>
+        <div class="statGrid">
+          ${statHtml('RTP', g.rtp)}
+          ${statHtml('Volatility', g.volatility)}
+          ${statHtml('Max Multiplier', g.maxMultiplier)}
+          ${statHtml('Paylines', g.lines)}
+        </div>
+      </div>
+    </div>`;
+}
+
+function applyFilters() {
+  const vol = filters.volatility;
+  const pay = filters.paylines;
+  const shown = GAMES.filter(g => {
+    // 分類篩選：category 為 "igaming" 或 "landbase"，對應上方頁籤
+    if (currentCategory !== 'all' && g.category !== currentCategory) return false;
+    return (!vol || g.volatility === vol) && (!pay || paylineClass(g.lines) === pay);
+  });
+  // 依「順序」排列（order 數字大的排前面/左上，1 排最後/右下；沒填的排最後、保持原順序）
+  shown.sort((a, b) => (b.order ?? -1e9) - (a.order ?? -1e9));
+  const grid = document.getElementById('grid');
+  grid.innerHTML = shown.length
+    ? shown.map(cardHtml).join('')
+    : `<div class="empty">No games match the current filters.</div>`;
+}
+
+boot();
+</script>
 </body>
 </html>
